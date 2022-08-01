@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title><%= title %></title>
+    <link rel='stylesheet' href='/stylesheets/style.css' />
+  </head>
+  <body bgcolor="#ccc">
+    <h1><%= title %></h1>
+    <img src =''/>
+    <form>
+      <input type="file" name="file1" id="file1"/>
+      <button>업로드</button>
+      <button type="button" onclick="saveFile()">저장</button>
+    </form>
+    <script>
+      async function saveFile() {
+
+      // create a new handle
+      const newHandle = await window.showSaveFilePicker();
+
+      // create a FileSystemWritableFileStream to write to
+      const writableStream = await newHandle.createWritable();
+
+      // write our file
+      // await writableStream.write(imgBlob);
+      await writableStream.write(document.querySelector('#file1').files[0].slice());
+
+      // close the file and write the contents to disk.
+      await writableStream.close();
+      }
+       function loadImg(){
+        var rs=new FileReader();
+        var f=document.querySelector('#file1').files[0];
+        var b=f.slice(); 
+        rs.readAsDataURL(b);
+        rs.addEventListener('loadend', e=>document.querySelector('img').src=e.target.result);
+      }
+
+      // document.querySelector('img').src= rs.result;
+      var ev;
+      document.querySelector('img').onclick=function(e){ev=e};
+
+      async function writeFile(fileHandle, contents) {
+        // Create a FileSystemWritableFileStream to write to.
+        const writable = await fileHandle.createWritable();
+
+        // Write the contents of the file to the stream.
+        await writable.write(contents);
+
+        // Close the file and write the contents to disk.
+        await writable.close();
+      }
+      function linkDown(){
+        var input=document.querySelector('#file1');
+        var a=document.createElement('a');
+        a.href=URL.createObjectURL(new Blob([input.files[0].slice()],{ type: "application/octet-stream" }));
+      }
+    </script>
+  </body>
+</html>
